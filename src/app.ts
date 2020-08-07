@@ -12,11 +12,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // register routes
-app.use("/actors", actors);
-app.use("/countries", countries);
-app.use("/directors", directors);
-app.use("/movies", movies);
-app.use("/users", users);
+app.use("api/actors", actors);
+app.use("api/countries", countries);
+app.use("api/directors", directors);
+app.use("api/movies", movies);
+app.use("api/users", users);
 
 
 app.use(express.static('./build'))
