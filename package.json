@@ -1,0 +1,27 @@
+{
+  "name": "peliculas",
+  "version": "1.0.0",
+  "description": "an ssr project to get laburo",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "peliculas",
+    "actores",
+    "directores"
+  ],
+  "author": "doni",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.7",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.25"
+  }
+}
