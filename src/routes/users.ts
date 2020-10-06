@@ -1,7 +1,22 @@
 import { Router, Request, Response } from "express";
 export const users = Router();
-import { User } from "../entity/User";
 
+
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth').OAuthStrategy;
+
+
+passport.use(new GoogleStrategy({
+    consumerKey: process.env.GOOGLE_CONSUMER_KEY,
+    consumerSecret: process.env.GOOGLE_CONSUMER_SECRET,
+    callbackURL: "http://www.example.com/auth/google/callback"
+  },
+  function(token, tokenSecret, profile, done) {
+      User.findOrCreate({ googleId: profile.id }, function (err, user) {
+        return done(err, user);
+      });
+  }
+));
 
 users.get('/', async (req:Request, res:Response) => {
     try {

@@ -5,7 +5,7 @@
     "username": "root",
     "password": "",
     "database": "peliculas",
-    "entities": ["dist/src/entity/*.js"],
+    "entities": ["./src/entity/*.ts"],
     "logging": true,
     "synchronize": false
 }

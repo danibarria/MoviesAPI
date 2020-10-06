@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
-import { createConnection } from "typeorm";
+import { createConnection, getConnection, Like } from "typeorm";
 import { Movie } from "../entity/movie";
-import { actors } from "./actors";
 import { Actor } from "../entity/actor";
 
 export const movies = Router();
@@ -11,8 +10,21 @@ createConnection().then(connection => {
     const actorRepository = connection.getRepository(Actor)
 
     movies.get('/', async (req:Request, res:Response) => {
+        // define default values for skip & take
+        const skip: number = Number.parseInt(req.query.skip as string) || 0
+        const take: number = Number.parseInt(req.query.take as string) || 10
+        const filter: string = req.query.filter as string || null
+        const filters = filter ? { name: Like(`%${filter}%`) } : {}
+
         try {
-            const movies = await movieRepository.query('SELECT * FROM movie')
+            const movies = await movieRepository.find({
+                where: filters,
+                order: {
+                    name: 'ASC'
+                    },
+                skip,
+                take
+            })
             
             res.status(200).send(movies)
         } catch (error) {
@@ -41,8 +53,6 @@ createConnection().then(connection => {
             
             movie.actors = [...actorsFound]
             await connection.manager.save(movie);
-
-            // await movieRepository.save(movie)
             
             res.status(201).send(movie)
         } catch (error) {
@@ -55,9 +65,16 @@ createConnection().then(connection => {
         const { body: { name, releaseDate, imageUrl, country, director, actors } } = req;
 
         try {
-            const updated = await movieRepository.update(id, { name, releaseDate, imageUrl, country, director })
-            /** @todo ver como se agrega many to many*/ 
-            res.status(200).send(updated)
+            const movie = await movieRepository.findOne(id)
+            // update movie data
+            await movieRepository.update(id, { name, releaseDate, imageUrl, country, director })
+            // update actors relation
+            const actorsFound = await actorRepository.findByIds(actors)
+
+            movie.actors = [...actorsFound]
+            await connection.manager.save(movie);
+
+            res.status(200).send(movie)
         } catch (error) {
             res.status(404).send(error)
         }
